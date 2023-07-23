@@ -7,9 +7,12 @@ const PasswordGenerator = () => {
   const [numberVal, setNumberVal] = useState(false);
   const [specialChar, setSpecialChar] = useState(false);
   const [passwordRange, setPasswordRange] = useState(1);
+  const [loader, setLoader] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState('');
 
   const generateRandomPassword = () => {
+    setLoader(true);
+    setGeneratedPassword('');
     const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
     const numberChars = '0123456789';
@@ -26,13 +29,16 @@ const PasswordGenerator = () => {
       console.log(randomIndex);
       password += includeChar[randomIndex];
     }
-    setGeneratedPassword(password);
+    setTimeout(() => {
+      setLoader(false);
+      setGeneratedPassword(password);
+    }, 1500);
   };
   const sliderTrackerStyle = {
     backgroundColor: 'red',
   };
   const sliderHandleStyle = {
-    borderColor: 'red', // Replace with your desired color
+    backgroundColor: 'cyan', // Replace with your desired color
   };
   let strengthIndicator = null;
   if (passwordRange < 8 && (specialChar || smallChar || capsChar || numberVal)) {
@@ -63,7 +69,7 @@ const PasswordGenerator = () => {
   }
   return (
     <div className='border border-red-700 flex items-center justify-center h-screen'>
-      <div className='bg-purple-800 max-lg:w-1/3 rounded-xl p-5 md:w-6/12 max-md:w-10/12 max-sm:w-10/12 sm:w-10/12 shadow-xl shadow-white'>
+      <div className='bg-purple-800 max-lg:w-1/3 rounded-xl p-5 md:w-6/12 max-md:w-10/12 max-sm:w-10/12 sm:w-10/12 shadow-xl shadow-purple-900'>
         <p className='flex justify-center font-bold text-2xl text-[#E8FFCE] p-4'>🚀Password Generator 🔐</p>
         <div className='p-1 m-4'>
           <div className='flex justify-between'>
@@ -80,22 +86,18 @@ const PasswordGenerator = () => {
             onChange={(e) => setPasswordRange(e)}
           />
         </div>
-        <div className='flex flex-col p-1 m-4'>
+        <div className='flex flex-col p-1 m-4 gap-2'>
           <Checkbox onChange={() => setCapsChar(!capsChar)} className='text-white text-xl max-sm:text-lg max-md:text-lg'>
-            {' '}
-            Uppercase [A-Z]{' '}
+            Uppercase [A-Z]
           </Checkbox>
           <Checkbox onChange={() => setSmallChar(!smallChar)} className='text-white text-xl max-sm:text-lg max-md:text-lg'>
-            {' '}
-            Lowercase [a-z]{' '}
+            Lowercase [a-z]
           </Checkbox>
           <Checkbox onChange={() => setNumberVal(!numberVal)} className='text-white text-xl max-sm:text-lg max-md:text-lg'>
-            {' '}
-            Numbers [0-9]{' '}
+            Numbers [0-9]
           </Checkbox>
           <Checkbox onChange={() => setSpecialChar(!specialChar)} className='text-white text-xl max-sm:text-lg max-md:text-lg'>
-            {' '}
-            Special Characters{' '}
+            Special Characters
           </Checkbox>
         </div>
         <div className='text-center m-4'>
@@ -104,8 +106,11 @@ const PasswordGenerator = () => {
         </div>
         <div className='text-center'>
           <Button
-            className=' bg-lime-300 text-black text w-36 h-12 text-lg border-none'
+            className={`${
+              !smallChar && !capsChar && !specialChar && !numberVal ? 'bg-red-300' : 'bg-lime-300'
+            } text-black text w-36 h-12 text-lg border-none`}
             onClick={generateRandomPassword}
+            loading={loader}
             disabled={!smallChar && !capsChar && !specialChar && !numberVal}
           >
             Generate

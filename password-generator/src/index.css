@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ant-btn[disabled] {
+  background-color: darkgray; /* Replace with your desired background color */
+}
